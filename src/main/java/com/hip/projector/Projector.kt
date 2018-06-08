@@ -50,7 +50,7 @@ data class ProjectedMutationEvent<TEntity, ID>(
    val id: ID,
    val previousState: TEntity?,
    val currentState: TEntity?,
-   val trigger: Any
+   val trigger: Any?
 ) {
    enum class Operation {
       ADDED,REMOVED,UPDATED
@@ -111,7 +111,7 @@ open class Projector<TEntity, ID>(spec: ProjectorSpec<TEntity, ID>) {
    fun observe(predicate: (TEntity) -> Boolean): Flux<QueryResult<TEntity>> {
       return eventStream
          .filter { mutationEvent -> mutationEvent.currentState != null && predicate(mutationEvent.currentState) }
-         .map { mutationEvent -> QueryResult(mutationEvent.currentState!!, mutationEvent.trigger) }
+         .map { mutationEvent -> QueryResult(mutationEvent.currentState!!, mutationEvent.trigger!!) }
    }
 
    fun queryAndObserve(predicate: (TEntity) -> Boolean): Flux<QueryResult<TEntity>> {
