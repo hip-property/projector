@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +26,7 @@ import com.hip.projector.aggregators.Operation.*
 import com.winterbe.expekt.expect
 import io.micrometer.core.instrument.Meter
 import org.junit.Test
+import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 import java.time.Duration
 
@@ -135,7 +136,7 @@ internal class ProjectorTest : BaseProjectorTest() {
    fun given_aQueryIsIssued_then_whenResultsMatch_itIsInvoked() {
       val projector = Projector(spec)
 
-      val queryStream = projector.observe { it.title.contains("Pan") }
+      val queryStream: Flux<QueryResult<Book>> = projector.observe { it.title.contains("Pan") }
 
       StepVerifier.create(queryStream)
          .then { sink.next(SimpleMutationEvent(Book(id = 2, title = "Teaching Cats Origami", classification = NON_FICTION, author = Author("Jimmy Schmitt")), ADDED)) }
@@ -148,6 +149,18 @@ internal class ProjectorTest : BaseProjectorTest() {
          }
          .thenCancel()
          .verify()
+   }
+
+   @Test
+   fun canQueryCurrentState() {
+      val projector = Projector(spec)
+
+      sink.next(SimpleMutationEvent(Book(id = 2, title = "Teaching Cats Origami", classification = NON_FICTION, author = Author("Jimmy Schmitt")), ADDED))
+      sink.next(SimpleMutationEvent(Book(id = 1, title = "Peter Pan", classification = FICTION, author = Author("J. M. Barrie")), ADDED))
+
+
+      val books = projector.query { it.title.contains("Pan") }
+      expect(books).size(1)
    }
 
 }
