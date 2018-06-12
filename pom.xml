@@ -8,35 +8,64 @@
       <version>1.0-SNAPSHOT</version>
    </parent>
    <modelVersion>4.0.0</modelVersion>
-
+   <licenses>
+      <license>
+         <name>Apache License</name>
+         <url>http://www.apache.org/licenses/</url>
+      </license>
+   </licenses>
+   <name>Projector</name>
    <artifactId>projector</artifactId>
+   <inceptionYear>2018</inceptionYear>
+   <organization>
+      <name>HiP Property</name>
+      <url>https://hip.property</url>
+   </organization>
+   <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <license.licenseName>apache_v2</license.licenseName>
+   </properties>
 
    <dependencies>
       <dependency>
          <groupId>io.projectreactor</groupId>
          <artifactId>reactor-core</artifactId>
       </dependency>
-
-      <!-- TODO : Remove this dependency before open sourcing.  Used for test scnearios -->
-      <!--<dependency>-->
-         <!--<groupId>com.hip</groupId>-->
-         <!--<artifactId>exchange-service-api</artifactId>-->
-         <!--<version>1.0-SNAPSHOT</version>-->
-         <!--<scope>test</scope>-->
-      <!--</dependency>-->
-
-      <!--<dependency>-->
-         <!--<groupId>com.hip</groupId>-->
-         <!--<artifactId>exchange-service-api</artifactId>-->
-         <!--<version>1.0-SNAPSHOT</version>-->
-         <!--<type>test-jar</type>-->
-         <!--<scope>test</scope>-->
-      <!--</dependency>-->
       <dependency>
          <groupId>io.projectreactor</groupId>
          <artifactId>reactor-test</artifactId>
          <scope>test</scope>
       </dependency>
    </dependencies>
-
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>license-maven-plugin</artifactId>
+            <version>1.16</version>
+            <configuration>
+               <verbose>false</verbose>
+               <sectionDelimiter>.</sectionDelimiter>
+               <processStartTag>=========================================================BeginLicense</processStartTag>
+                 <processEndTag>===========================================================EndLicense</processEndTag>
+            </configuration>
+            <executions>
+               <execution>
+                  <id>first</id>
+                  <goals>
+                     <goal>update-file-header</goal>
+                  </goals>
+                  <phase>process-sources</phase>
+                  <configuration>
+                     <licenseName>apache</licenseName>
+                     <roots>
+                        <root>src/main/java</root>
+                        <root>src/test/java</root>
+                     </roots>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
 </project>
